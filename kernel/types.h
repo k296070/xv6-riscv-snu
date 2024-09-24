@@ -8,3 +8,9 @@ typedef unsigned int  uint32;
 typedef unsigned long uint64;
 
 typedef uint64 pde_t;
+
+#ifdef SNU
+#define PMP_R   (1)
+#define PMP_W   (1 << 1)
+#define PMP_X   (1 << 2)
+#endif

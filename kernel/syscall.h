@@ -20,3 +20,8 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+#ifdef SNU
+#define SYS_nenter 22
+#define SYS_getpmpaddr 23
+#define SYS_getpmpcfg  24
+#endif

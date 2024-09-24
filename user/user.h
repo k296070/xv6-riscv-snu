@@ -22,6 +22,9 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int nenter(void);
+void *getpmpaddr(int);
+int getpmpcfg(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
