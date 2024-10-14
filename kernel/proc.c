@@ -5,6 +5,9 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#ifdef SNU
+#include "snule.h"
+#endif
 
 struct cpu cpus[NCPU];
 

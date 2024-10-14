@@ -794,8 +794,13 @@ void
 killstatus(char *s)
 {
   int xst;
-  
+
+#ifdef SNU
+  // Takes too much time with -icount option
+  for(int i = 0; i < 20; i++){
+#else
   for(int i = 0; i < 100; i++){
+#endif
     int pid1 = fork();
     if(pid1 < 0){
       printf("%s: fork failed\n", s);

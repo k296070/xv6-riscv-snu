@@ -22,6 +22,11 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+#ifdef SNU
+int nice(int);
+int test1(int, void*, void*, void*, void*);
+int test2(int, void*, void*, void*, void*);
+#endif
 
 // ulib.c
 int stat(const char*, struct stat*);

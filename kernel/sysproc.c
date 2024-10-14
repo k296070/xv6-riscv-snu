@@ -91,3 +91,19 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+#ifdef SNU
+uint64
+sys_nice(void)
+{
+  // Part 2: FILL HERE
+
+
+
+
+
+
+
+  return 0;
+}
+#endif

@@ -44,7 +44,9 @@ OBJS = \
   $K/sysfile.o \
   $K/kernelvec.o \
   $K/plic.o \
-  $K/virtio_disk.o
+  $K/virtio_disk.o \
+  $K/snule.o \
+  $K/systest.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -72,7 +74,12 @@ LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 
-CFLAGS = -Wall -Werror -O -fno-omit-frame-pointer -ggdb -gdwarf-2 -DSNU
+# Flags for PA3
+# -DLOG:   Activates PRINTLOG_START and PRINTLOG_END macros
+# -DPART1: Enables code specific to Part 1
+# -DPART2: Enables code specific to Part 2
+# -DPART3: Enables code specific to Part 3
+CFLAGS = -Wall -Werror -O -fno-omit-frame-pointer -ggdb -gdwarf-2 -DSNU -DLOG
 CFLAGS += -MD
 CFLAGS += -mcmodel=medany
 # CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
@@ -155,6 +162,7 @@ UPROGS=\
 	$U/_grind\
 	$U/_wc\
 	$U/_zombie\
+	$U/_task1\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
@@ -167,6 +175,7 @@ clean:
 	$U/initcode $U/initcode.out $K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
         $U/usys.S \
+	xv6.log xv6p.log graph.png \
 	$(UPROGS)
 
 # try to generate a unique GDB port
@@ -176,10 +185,11 @@ QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
 	else echo "-s -p $(GDBPORT)"; fi)
 ifndef CPUS
-CPUS := 3
+# SNU
+CPUS := 1
 endif
 
-QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
+QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic -icount shift=0
 QEMUOPTS += -global virtio-mmio.force-legacy=false
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
@@ -195,6 +205,15 @@ qemu-gdb: $K/kernel .gdbinit fs.img
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
 # SNU ----------------------------------------------------
+qemu-log: $K/kernel fs.img
+	$(QEMU) $(QEMUOPTS) | tee xv6.log
+	@echo "*** The output of xv6 is logged in the 'xv6.log' file." 1>&2
+
+png: xv6.log
+	@sed 's/\$$//g' xv6.log > xv6p.log
+	@./graph.py xv6p.log graph.png
+	@rm xv6p.log
+
 TARBALL = ../xv6-$(_PANUM)-$(_STUDENTID).tar.gz
 FILES = ./Makefile ./$K ./$U ./mkfs
 

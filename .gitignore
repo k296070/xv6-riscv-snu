@@ -15,3 +15,6 @@ mkfs
 kernel/kernel
 user/usys.S
 .gdbinit
+xv6.log
+xv6p.log
+graph.png

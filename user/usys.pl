@@ -36,3 +36,7 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
+# SNU
+entry("nice");
+entry("test1");
+entry("test2");
